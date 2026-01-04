@@ -18,7 +18,7 @@ Image module size with MSVC optimizations ~40kb.
 
 # Result after the module testing session
 
-![test_module_0](PostTestInfo/test_module_0.png)
+![test_module_0](TheiaPg/PostTestInfo/test_module_0.png)
 
 # Support for me
 
