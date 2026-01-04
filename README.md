@@ -1,4 +1,4 @@
-# TheiaPg - Runtime bypass PatchGuard w11-25h2
+# TheiaPg - Runtime PatchGuard bypass w11-25h2
 
 `TheiaPg` is an NT kernel module to prevent `PatchGuard` kernel integrity check routines from being performed before modification of critical kernel information (Critical-Kernel-Modules/Kernel-Objects) is detected and the irretrievable BugCheck-0109h (CRITICAL_STRUCTURE_CORRUPTION) `PatchGuard-BugCheck`.
 
