@@ -23,5 +23,7 @@ Image module size with MSVC optimizations ~40kb.
 # Support for me
 
 BTC:bc1q6pmyefhmrr0ld4m67h3xv0n40d0szylnw5y5sq
+
 ETH:0x9Dc8157B4Fd65840453438d8C0b60a09F9463f79
+
 TRX:TUZQPQLFoFXANCXANVFSxc9FertD5TqbJt
