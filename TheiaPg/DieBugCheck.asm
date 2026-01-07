@@ -14,7 +14,7 @@ cli
 
 test byte ptr[g_DieDeadlockMethod],1
 
-jnz SwDeadLockSubRoutine
+jnz DeadLockRoutine
 
 mov r12d,ss
 
@@ -151,7 +151,7 @@ jmp rax
 
 int 3
 
-SwDeadLockSubRoutine:
+DeadLockRoutine:
 
 mov ss,eax
 

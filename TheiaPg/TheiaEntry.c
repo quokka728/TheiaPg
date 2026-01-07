@@ -38,7 +38,7 @@ const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_MASK[sizeof THEIA_ENTRY_DATA_EXALLO
 */
 VOID TheiaEntry(VOID)
 {
-    #define ERROR_EXECUTE_THEIA_ENTRY 0xd1baa81aUI32
+    #define ERROR_THEIA_ENTRY 0xd1baa81aUI32
 
     const UCHAR HandlerVsrKiExecuteAllDpcs[] =
     {
@@ -115,7 +115,7 @@ VOID TheiaEntry(VOID)
     {
         DbgLog("[TheiaPg <->] TheiaEntry: Base for trampoline to stub VsrKiExecuteAllDpcs not found\n");
 
-        goto DIE_CALL_ERROR_EXECUTE_THEIA_ENTRY;
+        goto DIE_CALL_ERROR_THEIA_ENTRY;
     }
     else { DbgLog("[TheiaPg <+>] TheiaEntry: VsrKiExecuteAllDpcs is init\n"); }
     
@@ -132,7 +132,7 @@ VOID TheiaEntry(VOID)
     {
         DbgLog("[TheiaPg <->] TheiaEntry: Base for trampoline to stub VsrExAllocatePool2 not found\n");
 
-        goto DIE_CALL_ERROR_EXECUTE_THEIA_ENTRY;
+        goto DIE_CALL_ERROR_THEIA_ENTRY;
     }
     else { DbgLog("[TheiaPg <+>] TheiaEntry: VsrExAllocatePool2 is init\n"); }
 
@@ -186,7 +186,7 @@ VOID TheiaEntry(VOID)
 
     InitSearchPgSysThread(); ///< Calling initalizer sys-threads-walk.
 
-    if (g_VolatileNullByte) { DIE_CALL_ERROR_EXECUTE_THEIA_ENTRY: DieDispatchIntrnlError(ERROR_EXECUTE_THEIA_ENTRY); }
+    if (g_VolatileNullByte) { DIE_CALL_ERROR_THEIA_ENTRY: DieDispatchIntrnlError(ERROR_THEIA_ENTRY); }
 
     return;
 }

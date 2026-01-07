@@ -349,18 +349,18 @@ VOID InitTheiaContext(VOID)
                                                     //                                                             
     // =============================================++                                                             
    
-    if (g_CompleteInitGlobalData)
+    if (g_CompleteInitTheiaCtx)
     {
-        DbgLog("[TheiaPg <->] InitTheiaContext: Attempt double init global data\n");
+        DbgLog("[TheiaPg <->] InitTheiaContext: Attempt double init gTheiaCtx\n");
 
-        goto DIE_CALL_ERROR_DOUBLE_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_DOUBLE_INIT_THEIA_CONTEXT;
     }
 
     if (__readcr8() > DISPATCH_LEVEL)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: Inadmissible IRQL\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     // AllocateTheiaCtx ===============================================================================================================================================++
@@ -373,7 +373,7 @@ VOID InitTheiaContext(VOID)
     {                                                                                                                                                                  //
         DbgLog("[TheiaPg <->] InitTheiaContext: Bad alloc page for g_pTheiaCtx\n");                                                                                    //
                                                                                                                                                                        //
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;                                                                                                                          //
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;                                                                                                                          //
     }                                                                                                                                                                  //
                                                                                                                                                                        //
     // ================================================================================================================================================================++
@@ -392,7 +392,7 @@ VOID InitTheiaContext(VOID)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa KiExecuteAllDpcs not found\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     g_pTheiaCtx->pKiCustomRecurseRoutineX = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, ".text", NULL, g_pTheiaCtx->TheiaMetaDataBlock.KICUSTOMRECURSEROUTINEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.KICUSTOMRECURSEROUTINEX_MASK);
@@ -401,7 +401,7 @@ VOID InitTheiaContext(VOID)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa KiCustomRecurseRoutineX not found\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     g_pTheiaCtx->pKiDispatchCallout = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, ".text", NULL, g_pTheiaCtx->TheiaMetaDataBlock.KIDISPATCHCALLOUT_SIG, g_pTheiaCtx->TheiaMetaDataBlock.KIDISPATCHCALLOUT_MASK);
@@ -410,7 +410,7 @@ VOID InitTheiaContext(VOID)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa KiDispatchCallout not found\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     __sidt(&IDTR);
@@ -471,7 +471,7 @@ VOID InitTheiaContext(VOID)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmAllocateIndependentPagesEx not found\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     g_pTheiaCtx->pMmFreeIndependentPages = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, ".text", NULL, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_MASK);
@@ -480,7 +480,7 @@ VOID InitTheiaContext(VOID)
     {
         DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmFreeIndependentPages not found\n");
 
-        goto DIE_CALL_ERROR_INIT_GLOBAL_DATA;
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
     //
@@ -531,9 +531,11 @@ VOID InitTheiaContext(VOID)
     
     g_pTheiaCtx->CompleteSignatureTC = COMPLETE_SIGNATURE_TC;
 
-    if (g_VolatileNullByte) { DIE_CALL_ERROR_INIT_GLOBAL_DATA: DieDispatchIntrnlError(ERROR_INIT_THEIA_CONTEXT); }
+    g_CompleteInitTheiaCtx = TRUE;
 
-    if (g_VolatileNullByte) { DIE_CALL_ERROR_DOUBLE_INIT_GLOBAL_DATA: DieDispatchIntrnlError(ERROR_DOUBLE_INIT_THEIA_CONTEXT); }
+    if (g_VolatileNullByte) { DIE_CALL_ERROR_INIT_THEIA_CONTEXT: DieDispatchIntrnlError(ERROR_INIT_THEIA_CONTEXT); }
+
+    if (g_VolatileNullByte) { DIE_CALL_ERROR_DOUBLE_INIT_THEIA_CONTEXT: DieDispatchIntrnlError(ERROR_DOUBLE_INIT_THEIA_CONTEXT); }
 
     return;
 }
@@ -557,24 +559,24 @@ VOID CheckStatusTheiaCtx(VOID)
     {
         DbgLog("[TheiaPg <->] CheckStatusTheiaCtx: gTheiaContext is not allocate\n");
 
-        goto DIE_CALL_ERROR_GLOBAL_DATA_NOT_INIT;
+        goto DIE_CALL_ERROR_THEIA_CONTEXT_NOT_INIT;
     }
     else if (g_pTheiaCtx->CompleteSignatureTC != COMPLETE_SIGNATURE_TC)
     {
         DbgLog("[TheiaPg <->] CheckStatusTheiaCtx: gTheiaContext is not complete\n");
 
-        goto DIE_CALL_ERROR_GLOBAL_DATA_NOT_INIT;
+        goto DIE_CALL_ERROR_THEIA_CONTEXT_NOT_INIT;
     }
     else if (g_pTheiaCtx->TheiaMetaDataBlock.CompleteSignatureTMDB != COMPLETE_SIGNATURE_TMDB)
     {
         DbgLog("[TheiaPg <->] CheckStatusTheiaCtx: gTheiaMetaDataBlock is not complete\n");
 
-        goto DIE_CALL_ERROR_GLOBAL_DATA_NOT_INIT;
+        goto DIE_CALL_ERROR_THEIA_CONTEXT_NOT_INIT;
     }
     else { VOID; } ///< For clarity.
 
     
-    if (g_VolatileNullByte) { DIE_CALL_ERROR_GLOBAL_DATA_NOT_INIT: DieDispatchIntrnlError(ERROR_THEIA_CONTEXT_NOT_INIT); }
+    if (g_VolatileNullByte) { DIE_CALL_ERROR_THEIA_CONTEXT_NOT_INIT: DieDispatchIntrnlError(ERROR_THEIA_CONTEXT_NOT_INIT); }
     
     return;
 }

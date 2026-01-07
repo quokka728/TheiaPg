@@ -2,7 +2,7 @@
 
 PTHEIA_CONTEXT g_pTheiaCtx        = NULL;
 
-BOOLEAN g_CompleteInitGlobalData  = FALSE;
+BOOLEAN g_CompleteInitTheiaCtx  = FALSE;
 
 volatile UCHAR g_VolatileNullByte = 0UI8;
 

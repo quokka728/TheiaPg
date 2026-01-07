@@ -765,7 +765,7 @@ PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS],
             {
                 SaveRel32Offset = *(PLONG32)(pRegionSearch + 1UI64);
 
-                if ((PVOID)(((ULONG64)pRegionSearch + 5UI64) + ((SaveRel32Offset < 0UI32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000I64) : (LONG64)SaveRel32Offset)) == (PVOID)(OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA]))
+                if ((PVOID)(((ULONG64)pRegionSearch + 5UI64) + ((SaveRel32Offset < 0UI32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000UI64) : (LONG64)SaveRel32Offset)) == (PVOID)(OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA]))
                 {
                     pResultVa = pRegionSearch;
 

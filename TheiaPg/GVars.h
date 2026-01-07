@@ -4,11 +4,11 @@
 
 extern PTHEIA_CONTEXT g_pTheiaCtx;
 
-extern BOOLEAN g_CompleteInitGlobalData;
-
 extern volatile UCHAR g_VolatileNullByte;
 
 extern PVOID g_pStackAddrRetAddrImgEntry;
+
+extern BOOLEAN g_CompleteInitTheiaCtx;
 
 
 extern PVOID64 PsLoadedModuleList;
