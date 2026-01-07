@@ -19,7 +19,7 @@ BOOLEAN _IsAddressSafe(IN PVOID pCheckAddress)
 
     CheckStatusTheiaCtx();
 
-    if (!((__readcr8() < DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pCheckAddress) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pCheckAddress)))
+    if (!((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pCheckAddress) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pCheckAddress)))
     {
         DbgLog("\n_IsAddressSafe [-] Invalid CheckAddress.\n");
 
@@ -187,7 +187,7 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
             goto ExitJmp;
         }
         else if (!OptionalData[SPII_INDEX_OPTIONAL_DATA_SCIA] ||
-                 !((__readcr8() < DISPATCH_LEVEL) ? 
+                 !((__readcr8() <= DISPATCH_LEVEL) ? 
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(OptionalData[SPII_INDEX_OPTIONAL_DATA_SCIA]) :
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(OptionalData[SPII_INDEX_OPTIONAL_DATA_SCIA])))
         {
@@ -201,7 +201,7 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
 
             goto ExitJmp;
         }
-        else if (!pNameSection || !((__readcr8() < DISPATCH_LEVEL) ?
+        else if (!pNameSection || !((__readcr8() <= DISPATCH_LEVEL) ?
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pNameSection) :
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pNameSection)))
         {
@@ -264,7 +264,7 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
 
             goto ExitJmp;
         }
-        else if (!pNameSection || !((__readcr8() < DISPATCH_LEVEL) ? 
+        else if (!pNameSection || !((__readcr8() <= DISPATCH_LEVEL) ? 
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pNameSection) :
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pNameSection)))
         {
@@ -272,11 +272,11 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
 
             goto ExitJmp;
         }
-        else if ((!pSig || !((__readcr8() < DISPATCH_LEVEL) ? 
+        else if ((!pSig || !((__readcr8() <= DISPATCH_LEVEL) ? 
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pSig) :
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pSig)))
                                            ||
-                 (!pMaskSig || !((__readcr8() < DISPATCH_LEVEL) ?
+                 (!pMaskSig || !((__readcr8() <= DISPATCH_LEVEL) ?
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pMaskSig) :
                  (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pMaskSig))))
         {
@@ -302,7 +302,7 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
   
     if (pModuleName)
     {
-        if (!pModuleName || !((__readcr8() < DISPATCH_LEVEL) ?
+        if (!pModuleName || !((__readcr8() <= DISPATCH_LEVEL) ?
             (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pModuleName) :
             (IsLocalCtx ? SpiiCtx[SPII_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pModuleName)))
         {
@@ -672,7 +672,7 @@ PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS],
         }
     }
 
-    if (!pRegionSearch || !((__readcr8() < DISPATCH_LEVEL) ? 
+    if (!pRegionSearch || !((__readcr8() <= DISPATCH_LEVEL) ? 
         (IsLocalCtx ? SpirCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pRegionSearch) :
         (IsLocalCtx ? SpirCtx[SPIR_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pRegionSearch)))
     {
@@ -683,11 +683,11 @@ PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS],
 
     if (FlagsExecute & SPIR_NO_OPTIONAL)
     {
-        if ((!pSig || !((__readcr8() < DISPATCH_LEVEL) ? 
+        if ((!pSig || !((__readcr8() <= DISPATCH_LEVEL) ? 
             (IsLocalCtx ? SpirCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pSig) :
             (IsLocalCtx ? SpirCtx[SPIR_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pSig)))
                                       || 
-            (!pMaskSig || !((__readcr8() < DISPATCH_LEVEL) ? 
+            (!pMaskSig || !((__readcr8() <= DISPATCH_LEVEL) ? 
             (IsLocalCtx ? SpirCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pMaskSig) :
             (IsLocalCtx ? SpirCtx[SPIR_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pMaskSig))))
         {
@@ -700,7 +700,7 @@ PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS],
     }
     else if (FlagsExecute & SPIR_SCAN_CALLER_INPUT_ADDRESS)
     {
-        if (!OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA] || !((__readcr8() < DISPATCH_LEVEL) ?
+        if (!OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA] || !((__readcr8() <= DISPATCH_LEVEL) ?
             (IsLocalCtx ? SpirCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA]) :
             (IsLocalCtx ? SpirCtx[SPIR_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(OptionalData[SPIR_INDEX_OPTIONAL_DATA_SCIA])))
         {
@@ -722,7 +722,7 @@ PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS],
         goto ExitJmp;
     }
 
-    if (!LenStopSig || !((__readcr8() < DISPATCH_LEVEL) ? 
+    if (!LenStopSig || !((__readcr8() <= DISPATCH_LEVEL) ? 
         (IsLocalCtx ? SpirCtx[SPII_LOCAL_CONTEXT_MMISADDRESSVALID] : g_pTheiaCtx->pMmIsAddressValid)(pStopSig) :
         (IsLocalCtx ? SpirCtx[SPIR_LOCAL_CONTEXT_MMISNONPAGEDSYSTEMADDRESSVALID] : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid)(pStopSig)))
     {

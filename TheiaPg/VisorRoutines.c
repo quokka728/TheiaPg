@@ -160,11 +160,11 @@ volatile VOID VsrExAllocatePool2(IN OUT PINPUTCONTEXT_ICT pInputCtx)
 
     PUSHORT pCurrentTID = (PUSHORT)(pCurrentObjThread + (g_pTheiaCtx->TheiaMetaDataBlock.ETHREAD_Cid_OFFSET + g_pTheiaCtx->TheiaMetaDataBlock.CLIENT_ID_UniqueThread_OFFSET));
 
-    LONG64 Timeout = (-10000UI64 * 31536000000UI64); ///< 1 year.
+    const LONG64 Timeout = (-10000UI64 * 31536000000UI64); ///< 1 year.
+
+    const UCHAR RetOpcode = 0xC3UI8;
 
     LONG32 SaveRel32Offset = 0I32;
-
-    UCHAR RetOpcode = 0xC3UI8;
 
     PVOID pSearchSdbpCheckDllRWX = NULL;
 
@@ -409,9 +409,13 @@ volatile VOID VsrKiCustomRecurseRoutineX(IN OUT PINPUTCONTEXT_ICT pInputCtx)
 
     const LONG64 Timeout = (-10000UI64 * 31536000000UI64); ///< 1 year.
 
+    const UCHAR RetOpcode = 0xC3UI8;
+
     LONG32 SaveRel32Offset = 0I32;
 
     PVOID pRetAddrCallerPgAccessRoutine = NULL;
+
+    PKDPC pPgKDPC = NULL;
 
     BOOLEAN IsSleep = FALSE;
 
@@ -466,6 +470,13 @@ volatile VOID VsrKiCustomRecurseRoutineX(IN OUT PINPUTCONTEXT_ICT pInputCtx)
     DbgLog("[TheiaPg <+>] VsrKiCustomRecurseRoutineX: Handling exit phase...\n\n");
 
     DbgLog("[TheiaPg <+>] VsrKiCustomRecurseRoutineX: Return address CallerPgAccessRoutine: 0x%I64X\n\n", pRetAddrCallerPgAccessRoutine);
+
+    if (pPgKDPC = SearchPgKdpc(pInternalCtx))
+    {
+        DbgLog("[TheiaPg <+>] VsrKiCustomRecurseRoutineX: Detect PG-KDPC from cpu-unwind-ctx | _KDPC: 0x%I64X\n\n", pPgKDPC);
+
+        HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, pPgKDPC->DeferredRoutine, &RetOpcode, 1UI32);
+    }
 
     //
     // If IRQL > DISPATCH_LEVEL then the current executor is APC or THREAD, you can enter the current APC/THREAD in the delay.

@@ -84,14 +84,14 @@ VOID HrdIndpnRWVMemory(IN ULONG64 FlagsExecute, IN OUT PVOID pVa, IN OUT PVOID p
 			if (FlagsExecute & MEM_INDPN_RW_READ_OP_BIT) { goto DIE_CALL_ERROR_READ_V_MEMORY; }
 			else { goto DIE_CALL_ERROR_WRITE_V_MEMORY; }
 		}
-		else if (!pVa || !((__readcr8() < DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
+		else if (!pVa || !((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
 		{
 			DbgLog("[TheiaPg <->] HrdIndpnRWVMemory: Invalid Va\n");
 
 			if (FlagsExecute & MEM_INDPN_RW_READ_OP_BIT) { goto DIE_CALL_ERROR_READ_V_MEMORY; }
 			else { goto DIE_CALL_ERROR_WRITE_V_MEMORY; }
 		}
-		else if (!pVa || !((__readcr8() < DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pIoBuffer) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pIoBuffer)))
+		else if (!pVa || !((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pIoBuffer) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pIoBuffer)))
 		{
 			DbgLog("[TheiaPg <->] HrdIndpnRWVMemory: Invalid InputBuffer\n");
 
@@ -294,7 +294,7 @@ VOID HrdPatchAttributesInputPte(IN ULONG64 AndMask, IN ULONG64 OrMask, IN OUT PV
 
 		goto DIE_CALL_ERROR_PATCH_PTE_ATTRIBUTES;
 	}
-	else if (!pVa || !((__readcr8() < DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
+	else if (!pVa || !((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
 	{
 		DbgLog("[TheiaPg <->] HrdPatchAttributesInputPte: Invalid Va\n");
 
@@ -334,7 +334,7 @@ PMMPTE_HARDWARE HrdGetPteVa(IN PVOID pVa)
 
 	CheckStatusTheiaCtx();
 	
-	if (!pVa || !((__readcr8() < DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
+	if (!pVa || !((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
 	{
 		DbgLog("[TheiaPg <->] HrdPatchAttributesInputPte: Invalid Va\n");
 

@@ -69,7 +69,7 @@ VOID TheiaEntry(VOID)
       0xcc                                     // int3
     };
 
-    const UCHAR RetByte = 0xC3UI8;
+    const UCHAR RetOpcode = 0xC3UI8;
   
     const UCHAR NopOpcode = 0x90UI8;
 
@@ -93,7 +93,7 @@ VOID TheiaEntry(VOID)
 
     InitTheiaContext();
 
-    HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, g_pTheiaCtx->pKiSwInterruptDispatch, &RetByte, 1UI32);
+    HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, g_pTheiaCtx->pKiSwInterruptDispatch, &RetOpcode, 1UI32);
 
     DbgLog("[TheiaPg <+>] TheiaEntry: FixKiSwInterruptDispatch\n");
     
@@ -104,7 +104,7 @@ VOID TheiaEntry(VOID)
     
     DbgLog("[TheiaPg <+>] TheiaEntry: FixMaxDataSize\n");
 
-    HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, g_pTheiaCtx->pKiDispatchCallout, &RetByte, 1UI32);
+    HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, g_pTheiaCtx->pKiDispatchCallout, &RetOpcode, 1UI32);
 
     DbgLog("[TheiaPg <+>] TheiaEntry: FixKiDispatchCallout\n");
 
