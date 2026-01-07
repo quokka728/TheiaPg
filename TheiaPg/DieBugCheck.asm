@@ -183,9 +183,6 @@ mov ss,r12d
 xor r11d,r11d
 
 mov ss,r12d
-xor r12d,r12d
-
-mov ss,r12d
 xor r13d,r13d
 
 mov ss,r12d
