@@ -8,7 +8,7 @@ TypesLoadSysImg: The module is fully compatible with loading sys-img methods: BY
 
 HypervisorProtectEnvironment: The internal logic of the module is not compatible with hypervisor security (VBS/HVCI) because the module actively interacts with TablePages, and the access attributes of the GVA end PTE do not affect the attributes of the end PTE located on the EPT/NPT side, which means that the hardware access attributes to the PhysFrame will not be changed when modifying the Guest-End-PTE.
 
-SecureBoot: Module is conditionally compatible with SecureBoot, using the BYOVD boot method, the module can be mapped to KernelSpace.
+SecureBoot: Module is conditionally compatible with SecureBoot, using the BYOVD loading method, img module can be mapped to KernelSpace.
 
 ## Additional description
 
