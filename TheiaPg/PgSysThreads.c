@@ -230,18 +230,28 @@ volatile static VOID SearchPgSysThreadRoutine(IN OUT PINPUTCONTEXT_STUBAPCROUTIN
 
                 DbgLog("[TheiaPg <+>] SearchPgSysThreadRoutine: Handling exit phase...\n\n");
 
-                if ((!pPgCtx ? (pPgCtx = SearchPgCtx(pInternalCtx)) : pPgCtx))
+                if ((!pPgCtx ? (pPgCtx = SearchPgCtxInCtx(pInternalCtx)) : pPgCtx))
                 {
                     DbgLog("[TheiaPg <+>] SearchPgSysThreadRoutine: Detect possibly PgCaller | pPgCtx: 0x%I64X\n\n", pPgCtx);
 
                     if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0x7f8))) ///< LocalPgCtxBase + 0x7f8: PgDpcRoutine
                     {
-                        HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0x7f8), &RetOpcode, 1UI32);
+                        if (!((HrdGetPteInputVa(*(PVOID*)((PUCHAR)pPgCtx + 0x7f8)))->NoExecute))
+                        {
+                            DbgLog("[TheiaPg <+>] SearchPgSysThreadRoutine: Detect PgDpcRoutine in PgCtx | PgDpcRoutine: 0x%I64X\n\n", *(PVOID*)((PUCHAR)pPgCtx + 0x7f8));
+
+                            HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0x7f8), &RetOpcode, 1UI32);
+                        }
                     }
 
-                    if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0xA30))) ///< LocalPgCtxBase + 0xA30: PgApcRoutine (basically KiDispatchCallout)
+                    if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0xa30))) ///< LocalPgCtxBase + 0xA30: PgApcRoutine (basically KiDispatchCallout)
                     {
-                        HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0xA30), &RetOpcode, 1UI32);
+                        if (!((HrdGetPteInputVa(*(PVOID*)((PUCHAR)pPgCtx + 0xa30)))->NoExecute))
+                        {
+                            DbgLog("[TheiaPg <+>] SearchPgSysThreadRoutine: Detect PgApcRoutine in PgCtx | PgApcRoutine: 0x%I64X\n\n", *(PVOID*)((PUCHAR)pPgCtx + 0xa30));
+
+                            HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0xa30), &RetOpcode, 1UI32);
+                        }
                     }
 
                     //
@@ -288,7 +298,7 @@ volatile static VOID SearchPgSysThreadRoutine(IN OUT PINPUTCONTEXT_STUBAPCROUTIN
                 }
             }
 
-            if (pPgCtx = SearchPgCtx(pInternalCtx))
+            if (pPgCtx = SearchPgCtxInCtx(pInternalCtx))
             {
                 DbgLog("[TheiaPg <+>] SearchPgSysThreadRoutine: Detect PgCtx in CpuExecuteCtx | TCB: 0x%I64X TID: 0x%hX\n", pCurrentObjThread, *pCurrentTID);
 

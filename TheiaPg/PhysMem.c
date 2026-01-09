@@ -187,7 +187,7 @@ VOID HrdIndpnRWVMemory(IN ULONG64 FlagsExecute, IN OUT PVOID pVa, IN OUT PVOID p
 			break;
 		}
 
-		pPteInputVa = ((PMMPTE_HARDWARE)(g_pTheiaCtx->pMmPteBase + (((ULONG64)pVaMirror >> 9UI64) & 0x7FFFFFFFF8UI64)));
+		pPteInputVa = ((PMMPTE_HARDWARE)(g_pTheiaCtx->pMmPteBase + (((ULONG64)pVaMirror >> 9) & 0x7FFFFFFFF8UI64)));
 
 		SizeMetaVPage = 0x1000UI64;
 
@@ -209,9 +209,9 @@ VOID HrdIndpnRWVMemory(IN ULONG64 FlagsExecute, IN OUT PVOID pVa, IN OUT PVOID p
 
 	*KdDebuggerNotPresent = 1I8;
 
-	SaveRel32Offset = *(PLONG32)((PUCHAR)g_pTheiaCtx->pIoCancelIrp + 0x12UI64);
+	SaveRel32Offset = *(PLONG32)((PUCHAR)g_pTheiaCtx->pIoCancelIrp + 0x12);
 
-	pVfRuleClasses = (PULONG64)(((PUCHAR)g_pTheiaCtx->pIoCancelIrp + 0x16UI64) + ((SaveRel32Offset < 0I32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000UI64) : (LONG64)SaveRel32Offset));
+	pVfRuleClasses = (PULONG64)(((PUCHAR)g_pTheiaCtx->pIoCancelIrp + 0x16) + ((SaveRel32Offset < 0I32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000UI64) : (LONG64)SaveRel32Offset));
 
 	SaveGlobalVarsInMiShwBadMap[1UI8] = *pVfRuleClasses;
 
@@ -302,7 +302,7 @@ VOID HrdPatchAttributesInputPte(IN ULONG64 AndMask, IN ULONG64 OrMask, IN OUT PV
 	}
 	else { VOID; } ///< For clarity.
 
-	pPteInputVa = HrdGetPteVa(pVa);
+	pPteInputVa = HrdGetPteInputVa(pVa);
 
 	if (AndMask) { _InterlockedAnd64(pPteInputVa, AndMask); }
 	else { _InterlockedOr64(pPteInputVa, OrMask); }
@@ -316,7 +316,7 @@ VOID HrdPatchAttributesInputPte(IN ULONG64 AndMask, IN ULONG64 OrMask, IN OUT PV
 }
 
 /*++
-* Routine: HrdGetPteVa
+* Routine: HrdGetPteInputVa
 *
 * MaxIRQL: Any level
 *
@@ -326,7 +326,7 @@ VOID HrdPatchAttributesInputPte(IN ULONG64 AndMask, IN ULONG64 OrMask, IN OUT PV
 *
 * Description: Getting Self-Mapp-PTE VA
 --*/
-PMMPTE_HARDWARE HrdGetPteVa(IN PVOID pVa)
+PMMPTE_HARDWARE HrdGetPteInputVa(IN PVOID pVa)
 {
     #define ERROR_GET_PTE_VA 0x11ecdf34UI32
 
@@ -336,7 +336,7 @@ PMMPTE_HARDWARE HrdGetPteVa(IN PVOID pVa)
 	
 	if (!pVa || !((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pVa) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pVa)))
 	{
-		DbgLog("[TheiaPg <->] HrdPatchAttributesInputPte: Invalid Va\n");
+		DbgLog("[TheiaPg <->] HrdGetPteInputVa: Invalid Va\n");
 
 		goto DIE_CALL_ERROR_GET_PTE_VA;
 	}

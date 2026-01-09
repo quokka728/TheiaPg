@@ -10,4 +10,4 @@ extern VOID HrdIndpnRWVMemory(IN ULONG64 FlagsExecute, IN OUT PVOID pVa, IN OUT 
 
 extern VOID HrdPatchAttributesInputPte(IN ULONG64 AndMask, IN ULONG64 OrMask, IN OUT PVOID pVa);
 
-extern PMMPTE_HARDWARE HrdGetPteVa(IN PVOID pVa);
+extern PMMPTE_HARDWARE HrdGetPteInputVa(IN PVOID pVa);

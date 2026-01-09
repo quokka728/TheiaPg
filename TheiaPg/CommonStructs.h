@@ -628,6 +628,8 @@ typedef struct _THEIA_CONTEXT
     PVOID   pKiExecuteAllDpcs;
     PVOID   pKiCustomRecurseRoutineX;
     PVOID   pKiDispatchCallout;
+    PVOID(__fastcall* pMmAllocateIndependentPagesEx)(unsigned __int64 a1, int a2, __int64 a3, unsigned int a4); // To prevent dead recursion when using ExAllocatePool2 with VsrExAllocatePool2
+    PVOID(__fastcall* pMmFreeIndependentPages) (__int64 a1, __int64 a2, __int64 a3);
     PVOID   pKiSwInterruptDispatch;
     PVOID*  ppMaxDataSize;
 
@@ -664,9 +666,7 @@ typedef struct _THEIA_CONTEXT
     PVOID(__stdcall* pExAllocatePool2)(POOL_FLAGS Flags, SIZE_T NumberOfBytes, ULONG Tag);
     BOOLEAN(__fastcall* pPsIsSystemThread)(PETHREAD Thread);
     LONG_PTR(__fastcall* pObfDereferenceObject)(PVOID Object);
-    PVOID(__fastcall* pMmAllocateIndependentPagesEx)(unsigned __int64 a1, int a2, __int64 a3, unsigned int a4); // To prevent dead recursion when using ExAllocatePool2 with HkExAllocatePool2
-    PVOID(__fastcall* pMmFreeIndependentPages) (__int64 a1, __int64 a2, __int64 a3);
-        
+    
     //
     // A5-Block
     //

@@ -86,7 +86,7 @@ volatile VOID VsrKiExecuteAllDpcs(PINPUTCONTEXT_ICT pInputCtx)
         {
         DetectJmp:
 
-            DbgLog("[TheiaPg <+>] VsrKiExecuteAllDpcs: Detect possibly PG-KDPC | Reason: %s | DeferredRoutine: 0x%I64X | DeferredContext: 0x%I64X | KDPC: 0x%I64X\n\n", TypeDetect ? ReasonDetect0 : ReasonDetect1, pCurrentKDPC->DeferredRoutine, pCurrentKDPC->DeferredContext, pCurrentKDPC);
+            DbgLog("[TheiaPg <+>] VsrKiExecuteAllDpcs: Detect possibly PG-KDPC | Reason: %s | DeferredRoutine: 0x%I64X | DeferredContext: 0x%I64X | _KDPC: 0x%I64X\n\n", TypeDetect ? ReasonDetect0 : ReasonDetect1, pCurrentKDPC->DeferredRoutine, pCurrentKDPC->DeferredContext, pCurrentKDPC);
 
             pCurrentKDPC->DeferredRoutine = pVoidRoutine;
         }
@@ -240,18 +240,28 @@ volatile VOID VsrExAllocatePool2(IN OUT PINPUTCONTEXT_ICT pInputCtx)
 
                 if (pInputCtx->rax) { ExFreePool(pInputCtx->rax); pInputCtx->rax = 0I64; }
 
-                if ((!pPgCtx ? (pPgCtx = SearchPgCtx(pInternalCtx)) : pPgCtx))
+                if ((!pPgCtx ? (pPgCtx = SearchPgCtxInCtx(pInternalCtx)) : pPgCtx))
                 {
                     DbgLog("[TheiaPg <+>] VsrExAllocatePool2: Detect possibly PgCaller | pPgCtx: 0x%I64X\n\n", pPgCtx);
 
                     if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0x7f8))) ///< LocalPgCtxBase + 0x7f8: PgDpcRoutine
                     {
-                        HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0x7f8), &RetOpcode, 1UI32);
+                        if (!((HrdGetPteInputVa(*(PVOID*)((PUCHAR)pPgCtx + 0x7f8)))->NoExecute))
+                        {
+                            DbgLog("[TheiaPg <+>] VsrExAllocatePool2: Detect PgDpcRoutine in PgCtx | PgDpcRoutine: 0x%I64X\n\n", *(PVOID*)((PUCHAR)pPgCtx + 0x7f8));
+
+                            HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0x7f8), &RetOpcode, 1UI32);
+                        }
                     }
 
-                    if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0xA30))) ///< LocalPgCtxBase + 0xA30: PgApcRoutine (basically KiDispatchCallout)
+                    if (g_pTheiaCtx->pMmIsAddressValid(*(PVOID*)((PUCHAR)pPgCtx + 0xa30))) ///< LocalPgCtxBase + 0xA30: PgApcRoutine (basically KiDispatchCallout)
                     {
-                        HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0xA30), &RetOpcode, 1UI32);
+                        if (!((HrdGetPteInputVa(*(PVOID*)((PUCHAR)pPgCtx + 0xa30)))->NoExecute))
+                        {
+                            DbgLog("[TheiaPg <+>] VsrExAllocatePool2: Detect PgApcRoutine in PgCtx | PgApcRoutine: 0x%I64X\n\n", *(PVOID*)((PUCHAR)pPgCtx + 0xa30));
+
+                            HrdIndpnRWVMemory(MEM_INDPN_RW_WRITE_OP_BIT, *(PVOID*)((PUCHAR)pPgCtx + 0xa30), &RetOpcode, 1UI32);
+                        }
                     }
 
                     //
@@ -318,7 +328,7 @@ volatile VOID VsrExAllocatePool2(IN OUT PINPUTCONTEXT_ICT pInputCtx)
                 }         
             }
 
-            if (pPgCtx = SearchPgCtx(pInternalCtx))
+            if (pPgCtx = SearchPgCtxInCtx(pInternalCtx))
             {
                 DbgLog("[TheiaPg <+>] VsrExAllocatePool2: Detect PgCtx in CpuExecuteCtx | TCB: 0x%I64X TID: 0x%hX\n", pCurrentObjThread, *pCurrentTID);
 
@@ -334,7 +344,7 @@ volatile VOID VsrExAllocatePool2(IN OUT PINPUTCONTEXT_ICT pInputCtx)
     // {
     //     if (pInputCtx->rax)
     //     {
-    //         if ((*(PULONG64)(HrdGetPteVa((PVOID)pInputCtx->rax)) & 0x10801UI64) == 0x801UI64) ///< Checking RWX PTE-Attributes.
+    //         if ((*(PULONG64)(HrdGetPteInputVa((PVOID)pInputCtx->rax)) & 0x10801UI64) == 0x801UI64) ///< Checking RWX PTE-Attributes.
     //         {
     //             DbgLog("[TheiaPg <+>] VsrExAllocatePool2: Detect attempt allocate RWX-Page | NoPgArtifacts\n\n");
     // 
@@ -471,7 +481,7 @@ volatile VOID VsrKiCustomRecurseRoutineX(IN OUT PINPUTCONTEXT_ICT pInputCtx)
 
     DbgLog("[TheiaPg <+>] VsrKiCustomRecurseRoutineX: Return address CallerPgAccessRoutine: 0x%I64X\n\n", pRetAddrCallerPgAccessRoutine);
 
-    if (pPgKDPC = SearchPgKdpc(pInternalCtx))
+    if (pPgKDPC = HeurisSearchKdpcInCtx(pInternalCtx))
     {
         DbgLog("[TheiaPg <+>] VsrKiCustomRecurseRoutineX: Detect PG-KDPC from cpu-unwind-ctx | _KDPC: 0x%I64X\n\n", pPgKDPC);
 

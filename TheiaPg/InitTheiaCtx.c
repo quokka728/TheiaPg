@@ -413,6 +413,24 @@ VOID InitTheiaContext(VOID)
         goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
     }
 
+    g_pTheiaCtx->pMmAllocateIndependentPagesEx = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, "PAGE", NULL, g_pTheiaCtx->TheiaMetaDataBlock.MMALLOCATEINDEPENDENTPAGESEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.MMALLOCATEINDEPENDENTPAGESEX_MASK);
+
+    if (!g_pTheiaCtx->pMmAllocateIndependentPagesEx)
+    {
+        DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmAllocateIndependentPagesEx not found\n");
+
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
+    }
+
+    g_pTheiaCtx->pMmFreeIndependentPages = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, ".text", NULL, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_MASK);
+
+    if (!g_pTheiaCtx->pMmFreeIndependentPages)
+    {
+        DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmFreeIndependentPages not found\n");
+
+        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
+    }
+
     __sidt(&IDTR);
 
     pSwKIDTENTRY64 = (PKIDTENTRY64)((PUCHAR)(*(PVOID*)(IDTR + 2)) + (0x10UI64 * 0x20UI64));
@@ -464,24 +482,6 @@ VOID InitTheiaContext(VOID)
     g_pTheiaCtx->pPsIsSystemThread               = MmGetSystemRoutineAddress(&StrPsIsSystemThread);
 
     g_pTheiaCtx->pObfDereferenceObject           = MmGetSystemRoutineAddress(&StrObfDereferenceObject);
-
-    g_pTheiaCtx->pMmAllocateIndependentPagesEx = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, "PAGE", NULL, g_pTheiaCtx->TheiaMetaDataBlock.MMALLOCATEINDEPENDENTPAGESEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.MMALLOCATEINDEPENDENTPAGESEX_MASK);
-
-    if (!g_pTheiaCtx->pMmAllocateIndependentPagesEx)
-    {
-        DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmAllocateIndependentPagesEx not found\n");
-
-        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
-    }
-
-    g_pTheiaCtx->pMmFreeIndependentPages = _SearchPatternInImg(NULL, SPII_NO_OPTIONAL, PsInitialSystemProcess, ".text", NULL, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_SIG, g_pTheiaCtx->TheiaMetaDataBlock.MMFREEINDEPENDENTPAGESEX_MASK);
-
-    if (!g_pTheiaCtx->pMmFreeIndependentPages)
-    {
-        DbgLog("[TheiaPg <->] InitTheiaContext: BaseVa MmFreeIndependentPages not found\n");
-
-        goto DIE_CALL_ERROR_INIT_THEIA_CONTEXT;
-    }
 
     //
     // Initialization A5-Block

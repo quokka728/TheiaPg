@@ -1,6 +1,43 @@
 #include "LinkHeader.h"
 
 /*++
+* Routine: HeurisSearchKdpcInCtx
+*
+* MaxIRQL: Any level (If IRQL > DISPATCH_LEVEL then the input address must be NonPaged)
+*
+* Public/Private: Public
+*
+* @param Ctx: Pointer to _CONTEXT structure
+*
+* Description: Routine to check the _CONTEXT structure for found possibly BaseVa _KDPC.
+--*/
+PVOID HeurisSearchKdpcInCtx(IN PCONTEXT pCtx)
+{
+    CheckStatusTheiaCtx();
+
+    if (!((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(pCtx) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(pCtx)))
+    {
+        DbgLog("[TheiaPg <->] HeurisSearchKdpcInCtx: Invalid Ctx\n\n");
+
+        return NULL;
+    }
+
+    PULONG64 pKdpc = (PULONG64)&pCtx->Rax;
+
+    for (UCHAR i = 0UI8; i < 16UI8; ++i, ++pKdpc)
+    {
+        if (!((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid((PVOID)(*pKdpc)) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid((PVOID)(*pKdpc)))) { continue; }
+
+        if (((__readcr8() <= DISPATCH_LEVEL) ? g_pTheiaCtx->pMmIsAddressValid(((PKDPC)(*pKdpc))->DeferredRoutine) : g_pTheiaCtx->pMmIsNonPagedSystemAddressValid(((PKDPC)(*pKdpc))->DeferredRoutine)))
+        {
+            if (!((HrdGetPteInputVa(((PKDPC)(*pKdpc))->DeferredRoutine))->NoExecute)) { return *pKdpc; }
+        }
+    }
+
+    return NULL;
+}
+
+/*++
 * Routine: _IsAddressSafe
 *
 * MaxIRQL: DISPATCH_LEVEL (If IRQL > DISPATCH_LEVEL then the input address must be NonPaged)
@@ -115,7 +152,7 @@ PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN
 
     LONG32 SaveRel32Offset = 0I32;
 
-    UCHAR AccessMode = KernelMode; ///< UserMode-TablePages + KVAS: not working.
+    UCHAR AccessMode = KernelMode; ///< UserMode-TablePages + KVAShadowing: not working.
 
     PVOID pResultVa = NULL;
 
@@ -531,7 +568,7 @@ NoReturnBaseAddress:
             {
                 SaveRel32Offset = *(PLONG32)(pBaseAddrExeRegion + 1UI64);
 
-                if ((PVOID)(((ULONG64)pBaseAddrExeRegion + 5UI64) + ((SaveRel32Offset < 0UI32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000I64) : (LONG64)SaveRel32Offset)) == (PVOID)(OptionalData[SPII_INDEX_OPTIONAL_DATA_SCIA]))
+                if ((PVOID)(((ULONG64)pBaseAddrExeRegion + 5UI64) + ((SaveRel32Offset < 0UI32) ? ((LONG64)SaveRel32Offset | 0xffffffff00000000UI64) : (LONG64)SaveRel32Offset)) == (PVOID)(OptionalData[SPII_INDEX_OPTIONAL_DATA_SCIA]))
                 {
                     pResultVa = pBaseAddrExeRegion;
 
@@ -784,4 +821,3 @@ ExitJmp:
 
     return pResultVa;
 }
-

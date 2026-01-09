@@ -36,12 +36,15 @@
                                               //
 // ===========================================++
 
+extern PVOID HeurisSearchKdpcInCtx(IN PCONTEXT pCtx);
+
 extern BOOLEAN _IsAddressSafe(IN PVOID pCheckAddress);
 
 extern PVOID _SearchPatternInImg(IN ULONG64 OptionalData[SPII_AMOUNT_OPTIONAL_OBJS], IN ULONG32 FlagsExecute, IN PVOID pEprocessTrgtImg, IN PVOID pNameSection, IN PVOID pModuleName, IN PVOID pSig, IN PVOID pMaskSig);
 
 extern PVOID _SearchPatternInRegion(IN ULONG64 OptionalData[SPIR_AMOUNT_OPTIONAL_OBJS], IN ULONG32 FlagsExecute, IN PUCHAR pRegionSearch, IN PUCHAR pSig, IN PUCHAR pMaskSig, IN PUCHAR pStopSig, IN ULONG32 LenStopSig);
 
-volatile PVOID g_pSpiiNonLargePage;
 
-volatile PVOID g_pSpirNonLargePage;
+extern volatile PVOID g_pSpiiNonLargePage;
+
+extern volatile PVOID g_pSpirNonLargePage;
