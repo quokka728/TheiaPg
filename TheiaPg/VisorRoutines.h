@@ -2,7 +2,7 @@
 
 #include "LinkHeader.h"
 
-extern volatile VOID VsrKiExecuteAllDpcs(PINPUTCONTEXT_ICT pInputCtx);
+extern volatile VOID VsrKiExecuteAllDpcs(IN PINPUTCONTEXT_ICT pInputCtx);
 
 extern volatile VOID VsrExAllocatePool2(IN OUT PINPUTCONTEXT_ICT pInputCtx);
 

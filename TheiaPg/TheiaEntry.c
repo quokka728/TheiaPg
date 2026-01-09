@@ -1,14 +1,14 @@
 #include "LinkHeader.h"
 
-const UCHAR THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SIG[] =
+const UCHAR THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SUBSIG[] =
 {
   0x4c,0x8d, 0x80, 0x2c, 0x01, 0x00, 0x00, // lea     r8, [rax+12Ch]
   0x4f, 0x8d, 0x04, 0x40,                  // lea     r8, [r8+r8*2]
   0x49, 0xc1, 0xe0, 0x04                   // shl     r8, 4
 };
-const UCHAR THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_MASK[sizeof THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SIG] = { "xxxxxxxxxxxxxxx" };
+const UCHAR THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SUBSIG_MASK[sizeof THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SUBSIG] = { "xxxxxxxxxxxxxxx" };
 
-const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SIG[] =
+const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SUBSIG[] =
 {
   0x41, 0x5f,                              // pop     r15
   0x41, 0x5e,                              // pop     r14 
@@ -19,7 +19,7 @@ const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SIG[] =
   0x5d,                                    // pop     rbp
   0xc3                                     // ret
 };
-const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_MASK[sizeof THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SIG] = { "xxxxxxxxxxxx" };
+const UCHAR THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SUBSIG_MASK[sizeof THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SUBSIG] = { "xxxxxxxxxxxx" };
 
 #define ALLIGNMENT_ICT_KIEXECUTEALLDPCS 2I8
 
@@ -109,7 +109,7 @@ VOID TheiaEntry(VOID)
     DbgLog("[TheiaPg <+>] TheiaEntry: FixKiDispatchCallout\n");
 
     RelatedDataICT.pHookRoutine = &VsrKiExecuteAllDpcs;
-    RelatedDataICT.pBasePatch = _SearchPatternInRegion(NULL, SPIR_NO_OPTIONAL, g_pTheiaCtx->pKiExecuteAllDpcs, THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SIG, THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_MASK, &StopSig, sizeof StopSig);
+    RelatedDataICT.pBasePatch = _SearchPatternInRegion(NULL, SPIR_NO_OPTIONAL, g_pTheiaCtx->pKiExecuteAllDpcs, THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SUBSIG, THEIA_ENTRY_DATA_KIEXECUTEALLDPCS_SUBSIG_MASK, &StopSig, sizeof StopSig);
 
     if (!RelatedDataICT.pBasePatch)
     {
@@ -126,7 +126,7 @@ VOID TheiaEntry(VOID)
     HkInitCallTrmpln(&RelatedDataICT);
 
     RelatedDataICT.pHookRoutine = &VsrExAllocatePool2; 
-    RelatedDataICT.pBasePatch = _SearchPatternInRegion(NULL, SPIR_NO_OPTIONAL, g_pTheiaCtx->pExAllocatePool2, THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SIG, THEIA_ENTRY_DATA_EXALLOCATEPOOL2_MASK, &StopSig, sizeof StopSig);
+    RelatedDataICT.pBasePatch = _SearchPatternInRegion(NULL, SPIR_NO_OPTIONAL, g_pTheiaCtx->pExAllocatePool2, THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SUBSIG, THEIA_ENTRY_DATA_EXALLOCATEPOOL2_SUBSIG_MASK, &StopSig, sizeof StopSig);
 
     if (!RelatedDataICT.pBasePatch)
     {

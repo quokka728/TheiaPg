@@ -31,7 +31,7 @@
 *
 * Description: Hook KiExecuteAllDpcs for controling _KDPC in DPC_QUEUE current Cpu-Core.
 --*/
-volatile VOID VsrKiExecuteAllDpcs(PINPUTCONTEXT_ICT pInputCtx)
+volatile VOID VsrKiExecuteAllDpcs(IN PINPUTCONTEXT_ICT pInputCtx)
 {
     UCHAR ReasonDetect0[] = { "Unbacked DeferredRoutine" };
 

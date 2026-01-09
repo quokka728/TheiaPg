@@ -2,4 +2,4 @@
 
 #include "LinkHeader.h"
 
-extern PVOID SearchPgCtxInCtx(PCONTEXT pCtx);
+extern PVOID SearchPgCtxInCtx(IN PCONTEXT pCtx);

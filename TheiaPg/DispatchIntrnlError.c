@@ -21,11 +21,11 @@ volatile PVOID g_DieNonLargePage = NULL;
 --*/
 DECLSPEC_NORETURN VOID DieDispatchIntrnlError(IN ULONG32 InternalCode)
 {
-#define DIE_SOFT_METHOD 0UI8
-
-#define DIE_LOCAL_CONTEXT_IOCANCELIRP 0
-
-#define DIE_LOCAL_CONTEXT_KEBUGCHECKEX 1
+    #define DIE_SOFT_METHOD 0UI8
+    
+    #define DIE_LOCAL_CONTEXT_IOCANCELIRP 0
+    
+    #define DIE_LOCAL_CONTEXT_KEBUGCHECKEX 1
 
 	static volatile ULONG32 SynchBarrier0 = 0I32; ///< FixRaceCall.
 
